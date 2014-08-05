@@ -34,8 +34,8 @@ class Provider
         # Find the appropriate package.
         _package = module
 
-        # while path.basename(_package.parent.filename) isnt 'package.js'
-        #   _package = _package.parent
+        while path.basename(_package.parent.filename) isnt 'package.js'
+          _package = _package.parent
 
         # Go up the directory hierarchy looking for package.json.
         # See https://github.com/vesln/package/blob/master/lib/package.js
@@ -58,7 +58,7 @@ class Provider
       console.log(@packageName)
 
       # Get the blacklist.
-      blacklist = (atom.config.get("#{@packageName}.fileBlacklist") or "")
+      blacklist = (atom.config.get("#{@packageName}.fileBlacklist") or atom.config.get("autocomplete-plus.fileBlacklist") or "")
         .split ","
         .map (s) -> s.trim()
 

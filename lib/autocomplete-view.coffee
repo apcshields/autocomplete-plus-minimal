@@ -1,7 +1,6 @@
 {Editor, $, $$, Range}  = require "atom"
 _ = require "underscore-plus"
 SimpleSelectListView = require "./simple-select-list-view"
-FuzzyProvider = require "./fuzzy-provider"
 Perf = require "./perf"
 Utils = require "./utils"
 
@@ -21,8 +20,6 @@ class AutocompleteView extends SimpleSelectListView
 
     @addClass "autocomplete-plus"
     @providers = []
-
-    @registerProvider new FuzzyProvider(@editorView)
 
     @handleEvents()
     @setCurrentBuffer @editor.getBuffer()
