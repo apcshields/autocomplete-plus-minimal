@@ -1,7 +1,5 @@
 {Editor, $, $$, Range}  = require "atom"
 _ = require "underscore-plus"
-path = require "path"
-minimatch = require "minimatch"
 SimpleSelectListView = require "./simple-select-list-view"
 FuzzyProvider = require "./fuzzy-provider"
 Perf = require "./perf"
@@ -24,8 +22,6 @@ class AutocompleteView extends SimpleSelectListView
     @addClass "autocomplete-plus"
     @providers = []
 
-    return if @currentFileBlacklisted()
-
     @registerProvider new FuzzyProvider(@editorView)
 
     @handleEvents()
@@ -36,21 +32,6 @@ class AutocompleteView extends SimpleSelectListView
     @on "autocomplete-plus:select-next", => @selectNextItemView()
     @on "autocomplete-plus:select-previous", => @selectPreviousItemView()
     @on "autocomplete-plus:cancel", => @cancel()
-
-  # Private: Checks whether the current file is blacklisted
-  #
-  # Returns {Boolean} that defines whether the current file is blacklisted
-  currentFileBlacklisted: ->
-    blacklist = (atom.config.get("autocomplete-plus.fileBlacklist") or "")
-      .split ","
-      .map (s) -> s.trim()
-
-    fileName = path.basename @editor.getBuffer().getPath()
-    for blacklistGlob in blacklist
-      if minimatch fileName, blacklistGlob
-        return true
-
-    return false
 
   # Private: Creates a view for the given item
   #
@@ -110,7 +91,7 @@ class AutocompleteView extends SimpleSelectListView
   #
   # provider - The {Provider} to register
   registerProvider: (provider) ->
-    @providers.push(provider) unless _.findWhere(@providers, provider)?
+    @providers.push(provider) unless _.findWhere(@providers, provider)? or provider.currentFileBlacklisted()
 
   # Public: Unregisters the given provider
   #
