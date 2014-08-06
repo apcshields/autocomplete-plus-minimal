@@ -26,9 +26,6 @@ class Provider
   #
   # Returns {Boolean} that defines whether the current file is blacklisted
   currentFileBlacklisted: ->
-    console.log(@constructor)
-    console.log(module)
-
     try
       if not @packageName
         # Find the appropriate package.
@@ -55,14 +52,10 @@ class Provider
         @package = JSON.parse fs.readFileSync(found, 'utf8')
         @packageName = @package.name
 
-      console.log(@packageName)
-
       # Get the blacklist.
       blacklist = (atom.config.get("#{@packageName}.fileBlacklist") or atom.config.get("autocomplete-plus.fileBlacklist") or "")
         .split ","
         .map (s) -> s.trim()
-
-      console.log(blacklist)
 
       # Get the current file name.
       fileName = path.basename @editor.getBuffer().getPath()
