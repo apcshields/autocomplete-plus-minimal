@@ -31,7 +31,7 @@ class Provider
         # Find the appropriate package.
         _package = module
 
-        while path.basename(_package.parent.filename) isnt 'package.js'
+        while (parentFilename = path.basename(_package.parent.filename)) isnt 'package.js' and parentFilename isnt 'spec-suite.coffee'
           _package = _package.parent
 
         # Go up the directory hierarchy looking for package.json.
