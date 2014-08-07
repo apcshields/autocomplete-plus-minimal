@@ -54,8 +54,6 @@ class Provider
 
       # Get the blacklist.
       blacklist = atom.config.get("#{@packageName}.fileBlacklist") or ""
-        .split ","
-        .map (s) -> s.trim()
 
       # Get the current file name.
       fileName = path.basename @editor.getBuffer().getPath()
