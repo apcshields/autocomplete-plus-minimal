@@ -53,7 +53,7 @@ class Provider
         @packageName = @package.name
 
       # Get the blacklist.
-      blacklist = atom.config.get("#{@packageName}.fileBlacklist") or "")
+      blacklist = atom.config.get("#{@packageName}.fileBlacklist") or ""
         .split ","
         .map (s) -> s.trim()
 
