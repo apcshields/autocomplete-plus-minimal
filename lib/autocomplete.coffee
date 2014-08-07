@@ -4,12 +4,6 @@ Provider = require "./provider"
 Suggestion = require "./suggestion"
 
 module.exports =
-  configDefaults:
-    includeCompletionsFromAllBuffers: false
-    fileBlacklist: ".*, *.md"
-    enableAutoActivation: true
-    autoActivationDelay: 100
-
   autocompleteViews: []
   editorSubscription: null
 
