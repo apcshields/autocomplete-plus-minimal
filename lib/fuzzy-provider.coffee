@@ -9,6 +9,8 @@ module.exports =
 class FuzzyProvider extends Provider
   wordList: null
   debug: false
+  configDefaults:
+    includeCompletionsFromAllBuffers: false
 
   initialize: ->
     @buildWordList()
@@ -101,7 +103,10 @@ class FuzzyProvider extends Provider
     wordList = []
 
     # Do we want autocompletions from all open buffers?
-    if atom.config.get "autocomplete-plus.includeCompletionsFromAllBuffers"
+    includeCompletionsFromAllBuffers = atom.config.get "#{@package.name}.includeCompletionsFromAllBuffers"
+    includeCompletionsFromAllBuffers = if includeCompletionsFromAllBuffers isnt undefined then includeCompletionsFromAllBuffers else @configDefaults.includeCompletionsFromAllBuffers # Only use the default value if the user hasn't set one.
+
+    if includeCompletionsFromAllBuffers
       buffers = atom.project.getBuffers()
     else
       buffers = [@editor.getBuffer()]

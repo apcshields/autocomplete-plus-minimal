@@ -2,6 +2,8 @@ _ = require "underscore-plus"
 AutocompleteView = require "./autocomplete-view"
 Provider = require "./provider"
 Suggestion = require "./suggestion"
+path = require "path"
+fs = require "fs"
 
 module.exports =
   autocompleteViews: []
@@ -9,22 +11,11 @@ module.exports =
 
   # Public: Creates AutocompleteView instances for all active and future editors
   activate: ->
-    # If both autosave and autocomplete+'s auto-activation feature are enabled,
-    # disable the auto-activation
-    if atom.packages.isPackageLoaded("autosave") and
-      atom.config.get("autosave.enabled") and
-      atom.config.get("autocomplete-plus.enableAutoActivation")
-        atom.config.set "autocomplete-plus.enableAutoActivation", false
-
-        alert """Warning from autocomplete+:
-
-        autocomplete+ is not compatible with the autosave package when the auto-activation feature is enabled. Therefore, auto-activation has been disabled.
-
-        autocomplete+ can now only be triggered using the keyboard shortcut `ctrl+space`."""
+    @getCallingPackage()
 
     @editorSubscription = atom.workspaceView.eachEditorView (editor) =>
       if editor.attached and not editor.mini
-        autocompleteView = new AutocompleteView(editor)
+        autocompleteView = new AutocompleteView(editor, @package)
         editor.on "editor:will-be-removed", =>
           autocompleteView.remove() unless autocompleteView.hasParent()
           autocompleteView.dispose()
@@ -56,6 +47,36 @@ module.exports =
   # provider - The {Provider} to unregister
   unregisterProvider: (provider) ->
     view.unregisterProvider for view in @autocompleteViews
+
+  # Private: Finds the name of the package loaded by package.js.
+  #
+  # Returns {String} which is the name of the package loaded by package.js.
+  getCallingPackage: ->
+    if not @package
+      # Find the appropriate package.
+      _package = module
+
+      while (parentFilename = path.basename(_package.parent.filename)) isnt 'package.js' and parentFilename isnt 'spec-suite.coffee'
+        _package = _package.parent
+
+      # Go up the directory hierarchy looking for package.json.
+      # See https://github.com/vesln/package/blob/master/lib/package.js
+      location = path.dirname _package.filename
+      found = null
+
+      until found
+        if fs.existsSync(location + '/package.json')
+          found = location + '/package.json'
+        else if location isnt '/'
+          location = path.dirname location
+        else
+          throw new Error "Couldn't find package.json for #{_package.filename}"
+
+      # Read package.json.
+      @package = JSON.parse fs.readFileSync(found, 'utf8')
+
+    return @package
+
 
   Provider: Provider
   Suggestion: Suggestion

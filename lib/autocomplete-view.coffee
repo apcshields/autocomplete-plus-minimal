@@ -3,17 +3,23 @@ _ = require "underscore-plus"
 SimpleSelectListView = require "./simple-select-list-view"
 Perf = require "./perf"
 Utils = require "./utils"
+path = require "path"
+minimatch = require "minimatch"
 
 module.exports =
 class AutocompleteView extends SimpleSelectListView
   currentBuffer: null
   debug: false
+  configDefaults:
+    fileBlacklist: ''
+    enableAutoActivation: true
+    autoActivationDelay: 100
 
   # Private: Makes sure we're listening to editor and buffer events, sets
   # the current buffer
   #
   # editorView - {EditorView}
-  initialize: (@editorView) ->
+  initialize: (@editorView, @package) ->
     {@editor} = @editorView
 
     super
@@ -29,6 +35,23 @@ class AutocompleteView extends SimpleSelectListView
     @on "autocomplete-plus:select-next", => @selectNextItemView()
     @on "autocomplete-plus:select-previous", => @selectPreviousItemView()
     @on "autocomplete-plus:cancel", => @cancel()
+
+  # Private: Checks whether the current file is blacklisted
+  #
+  # Returns {Boolean} that defines whether the current file is blacklisted
+  currentFileBlacklisted: ->
+    # Get the blacklist.
+    blacklist = atom.config.get("#{@package.name}.fileBlacklist")
+    blacklist = if blacklist isnt undefined then blacklist else @configDefaults.fileBlacklist # Use default library value, but only if not set by someone else.
+
+    # Get the current file name.
+    fileName = path.basename @editor.getBuffer().getPath()
+
+    # Check current file name against blacklist.
+    if minimatch fileName, blacklist
+      return true
+
+    return false
 
   # Private: Creates a view for the given item
   #
@@ -88,7 +111,7 @@ class AutocompleteView extends SimpleSelectListView
   #
   # provider - The {Provider} to register
   registerProvider: (provider) ->
-    @providers.push(provider) unless _.findWhere(@providers, provider)? or provider.currentFileBlacklisted()
+    @providers.push(provider) unless _.findWhere(@providers, provider)? or @currentFileBlacklisted()
 
   # Public: Unregisters the given provider
   #
@@ -150,7 +173,9 @@ class AutocompleteView extends SimpleSelectListView
 
   # Private: Gets called when the content has been modified
   contentsModified: =>
-    delay = parseInt(atom.config.get "autocomplete-plus.autoActivationDelay")
+    delay = parseInt(atom.config.get "#{@package.name}.autoActivationDelay")
+    delay = if delay isnt undefined then delay else @configDefaults.autoActivationDelay # Use default library value, but only if not set by someone else.
+
     if @delayTimeout
       clearTimeout @delayTimeout
 
@@ -173,8 +198,11 @@ class AutocompleteView extends SimpleSelectListView
   #
   # e - The change {Event}
   onChanged: (e) =>
+    enableAutoActivation = atom.config.get("#{@package.name}.enableAutoActivation")
+    enableAutoActivation = if enableAutoActivation isnt undefined then enableAutoActivation else @configDefaults.enableAutoActivation # Use default library value, but only if not set by someone else.
+
     typedText = e.newText.trim()
-    if typedText.length is 1 and atom.config.get "autocomplete-plus.enableAutoActivation"
+    if typedText.length is 1 and enableAutoActivation
       @contentsModified()
     else
       # Don't refocus since we probably still have focus
