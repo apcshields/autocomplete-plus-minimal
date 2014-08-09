@@ -1,15 +1,16 @@
 {
-  "name": "autocomplete-plus",
-  "version": "0.21.0",
+  "name": "autocomplete-plus-library",
+  "version": "0.1.0",
   "main": "./lib/autocomplete",
-  "description": "Display possible completions in the editor while typing",
-  "repository": "https://github.com/saschagehlich/autocomplete-plus",
+  "description": "Library to display possible completions in Atom while typing.",
+  "repository": "https://github.com/apcshields/autocomplete-plus-library",
   "engines": {
     "atom": "*"
   },
   "contributors": [
     "Sascha Gehlich <sascha@gehlich.us>",
-    "Joe Fitzgerald <jfitzgerald@gopivotal.com>"
+    "Joe Fitzgerald <jfitzgerald@gopivotal.com>",
+    "apcshields"
   ],
   "dependencies": {
     "async": ">=0.9.0",

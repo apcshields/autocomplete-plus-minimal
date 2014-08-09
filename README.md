@@ -1,47 +1,36 @@
-# autocomplete+ package [![Build Status](https://travis-ci.org/saschagehlich/autocomplete-plus.svg?branch=master)](https://travis-ci.org/saschagehlich/autocomplete-plus)
+This is a fork of the [autocomplete-plus package](https://github.com/saschagehlich/autocomplete-plus)
+for [Atom](http://atom.io/). It has been modified to function as a library for
+other autocomplete packages without providing its own default provider.
 
-[View the changelog](https://github.com/saschagehlich/autocomplete-plus/blob/master/CHANGELOG.md)
+If you are an Atom package developer looking to develop a specialized
+autocomplete package, this fork may be of interest. Otherwise, you probably want
+[the original](https://github.com/saschagehlich/autocomplete-plus).
 
-View and insert possible completions in the editor while typing
+[View the changelog](https://github.com/apcshields/autocomplete-plus/blob/master/CHANGELOG.md)
 
-![Autocomplete+](http://s14.directupload.net/images/140304/y7r7g5df.gif)
+## Differences from saschagehlich's original
 
-**Please note:** In the example above I have "Enable Auto Activation" enabled.
+* User-configurable per-provider file blacklisting.
+* No generic autocomplete provider. By contrast, installing the
+  autocomplete-plus package in Atom, which is required for autocomplete-plus
+  plugin/provider development in the original package, automatically turns on a
+  generic provider. (The default provider from the original package,
+  FuzzyProvider, is still included but only used for testing.)
 
-![Enable auto activation setting](https://cloud.githubusercontent.com/assets/119684/3029677/fab41bb0-e037-11e3-85bf-a696996f2478.png)
+## Use as a library for autocompletion packages
 
-## Installation
+Use this fork of autocomplete-plus according to the autocomplete-plus tutorial,
+"[Registering and creating suggestion providers](https://github.com/saschagehlich/autocomplete-plus/wiki/Tutorial:-Registering-and-creating-a-suggestion-provider)".
+The only addition you may wish to make is to provide a configuration key in your
+main file like so:
 
-You can install autocomplete+ using the Preferences pane.
-
-## Plugins
-
-Also grab one of these awesome additions for autocomplete+:
-
-* [autocomplete-snippets](https://atom.io/packages/autocomplete-snippets)
-* [autocomplete-paths](https://atom.io/packages/autocomplete-paths)
-
-## Usage
-
-Just type some stuff, autocomplete+ will automatically show you some suggestions.
-Press `UP` and `DOWN` to select another suggestion, press `TAB` to confirm your selection.
-Additional confirmation keymapping can be customised in your keymap.cson:
 ```coffeescript
-".autocomplete-plus input.hidden-input":
-  "enter": "autocomplete-plus:confirm"
+module.exports =
+  configDefaults:
+    fileBlacklist: "!*.{md,markdown,pandoc}"
 ```
 
-## Features
-
-* Shows autocompletion suggestions while typing
-* Two modes: Live and delayed autocompletion (instant might slow down performance)
-* Wordlist generation happens initially and on save (saves performance)
-* Suggestions are calculated using `fuzzaldrin` (better results)
-* File blacklisting
-* Automatic wordlist expansion while typing
-
-## Geeky Stuff: Adding Suggestion Providers
-
-Since version 0.12.0, other packages are able to register suggestion providers to the autocomplete-plus package.
-
-[See the tutorial on how to create and register suggestion providers](https://github.com/saschagehlich/autocomplete-plus/wiki/Tutorial:-Registering-and-creating-a-suggestion-provider)
+In this example, the package will not provide autocompletion in any files except
+those whose names end in `.md`, `.markdown`, or `.pandoc`. This will not affect
+any other autocompletion providers, nor will the blacklist settings of other
+providers affect your package.
