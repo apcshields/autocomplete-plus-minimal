@@ -12,6 +12,11 @@ class FuzzyProvider extends Provider
   configDefaults:
     includeCompletionsFromAllBuffers: false
 
+  constructor: (@editorView, @package) ->
+    {@editor} = @editorView
+
+    @initialize.apply this, arguments
+
   initialize: ->
     @buildWordList()
 
