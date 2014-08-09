@@ -2,6 +2,7 @@ require "../spec-helper"
 {$, EditorView, WorkspaceView} = require 'atom'
 AutocompleteView = require '../../lib/autocomplete-view'
 Autocomplete = require '../../lib/autocomplete'
+FuzzyProvider = require '../../lib/fuzzy-provider'
 
 describe "Autocomplete", ->
   [activationPromise, autocomplete, editorView, editor, completionDelay] = []
@@ -28,7 +29,12 @@ describe "Autocomplete", ->
 
       runs ->
         editorView = atom.workspaceView.getActiveView()
-        autocomplete = new AutocompleteView editorView
+        autocomplete = new AutocompleteView editorView, { name: 'autocomplete-plus' }
+
+        # Register a FuzzyProvider for editorView with autocompleteView.
+        # This used to happen automatically in AutocompleteView->initialize.
+        fuzzyProvider = new FuzzyProvider(editorView, { name: "autocomplete-plus" })
+        autocomplete.registerProvider fuzzyProvider
 
     it "it adds words hyphens to the wordlist", ->
       runs ->

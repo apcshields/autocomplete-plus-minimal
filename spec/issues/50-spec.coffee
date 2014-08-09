@@ -2,6 +2,7 @@ require "../spec-helper"
 {$, EditorView, WorkspaceView} = require 'atom'
 AutocompleteView = require '../../lib/autocomplete-view'
 Autocomplete = require '../../lib/autocomplete'
+FuzzyProvider = require '../../lib/fuzzy-provider'
 
 describe "Autocomplete", ->
   [activationPromise, autocomplete, editorView, editor, completionDelay] = []
@@ -26,7 +27,13 @@ describe "Autocomplete", ->
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) -> autocomplete = a.mainModule
 
-      runs -> editorView = atom.workspaceView.getActiveView()
+      runs ->
+        editorView = atom.workspaceView.getActiveView()
+
+        # Register a FuzzyProvider for editorView with autocompleteView.
+        # This used to happen automatically in AutocompleteView->initialize.
+        fuzzyProvider = new FuzzyProvider(editorView, { name: "autocomplete-plus" })
+        autocomplete.registerProviderForEditorView fuzzyProvider, editorView
 
     it "works after closing one of the copied tabs", ->
       runs ->

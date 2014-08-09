@@ -4,6 +4,7 @@ _ = require "underscore-plus"
 AutocompleteView = require '../lib/autocomplete-view'
 Autocomplete = require '../lib/autocomplete'
 TestProvider = require "./lib/test-provider"
+FuzzyProvider = require '../lib/fuzzy-provider'
 
 describe "AutocompleteView", ->
   [activationPromise, completionDelay, editorView, editor, autocomplete, autocompleteView] = []
@@ -39,6 +40,11 @@ describe "AutocompleteView", ->
 
       runs ->
         editorView = atom.workspaceView.getActiveView()
+
+        # Register a FuzzyProvider for editorView with autocompleteView.
+        # This used to happen automatically in AutocompleteView->initialize.
+        fuzzyProvider = new FuzzyProvider(editorView, { name: "autocomplete-plus" })
+        autocompleteView.registerProvider fuzzyProvider
 
     # TODO: Move this to a separate fuzzyprovider spec
     it "adds words to the wordlist after they have been written", ->

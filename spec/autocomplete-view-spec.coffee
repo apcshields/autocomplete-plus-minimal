@@ -4,6 +4,7 @@ _ = require "underscore-plus"
 AutocompleteView = require '../lib/autocomplete-view'
 Autocomplete = require '../lib/autocomplete'
 TestProvider = require "./lib/test-provider"
+FuzzyProvider = require '../lib/fuzzy-provider'
 
 describe "AutocompleteView", ->
   [activationPromise, completionDelay, editorView, editor, autocomplete, autocompleteView] = []
@@ -40,6 +41,11 @@ describe "AutocompleteView", ->
 
       runs ->
         editorView = atom.workspaceView.getActiveView()
+
+        # Register a FuzzyProvider for editorView with autocompleteView.
+        # This used to happen automatically in AutocompleteView->initialize.
+        fuzzyProvider = new FuzzyProvider(editorView, { name: "autocomplete-plus" })
+        autocompleteView.registerProvider fuzzyProvider
 
     describe "on changed events", ->
       it "should attach when finding suggestions", ->
@@ -212,6 +218,12 @@ describe "AutocompleteView", ->
         autocomplete = a.mainModule
         autocompleteView = autocomplete.autocompleteViews[0]
 
+        # Register a FuzzyProvider for editorView with autocompleteView.
+        # This used to happen automatically in AutocompleteView->initialize.
+        editorView = atom.workspaceView.getActiveView()
+        fuzzyProvider = new FuzzyProvider(editorView, { name: "autocomplete-plus" })
+        autocompleteView.registerProvider fuzzyProvider
+
       runs ->
         editorView = atom.workspaceView.getActiveView()
 
@@ -243,6 +255,11 @@ describe "AutocompleteView", ->
 
       runs ->
         editorView = atom.workspaceView.getActiveView()
+
+        # Register a FuzzyProvider for editorView with autocompleteView.
+        # This used to happen automatically in AutocompleteView->initialize.
+        fuzzyProvider = new FuzzyProvider(editorView, { name: "autocomplete-plus" })
+        autocompleteView.registerProvider fuzzyProvider
 
     it "includes completions for the scope's completion preferences", ->
       runs ->
@@ -276,6 +293,11 @@ describe "AutocompleteView", ->
 
       runs ->
         editorView = atom.workspaceView.getActiveView()
+
+        # Register a FuzzyProvider for editorView with autocompleteView.
+        # This used to happen automatically in AutocompleteView->initialize.
+        fuzzyProvider = new FuzzyProvider(editorView, { name: "autocomplete-plus" })
+        autocompleteView.registerProvider fuzzyProvider
 
       runs ->
         editorView.attachToDom()
@@ -324,6 +346,11 @@ describe "AutocompleteView", ->
       runs ->
         editorView = atom.workspaceView.getActiveView()
 
+        # Register a FuzzyProvider for editorView with autocompleteView.
+        # This used to happen automatically in AutocompleteView->initialize.
+        fuzzyProvider = new FuzzyProvider(editorView, { name: "autocomplete-plus" })
+        autocompleteView.registerProvider fuzzyProvider
+
     it "does not show suggestions after a delay", ->
       triggerAutocompletion editor
       advanceClock completionDelay
@@ -349,6 +376,11 @@ describe "AutocompleteView", ->
 
       runs ->
         editorView = atom.workspaceView.getActiveView()
+
+        # Register a FuzzyProvider for editorView with autocompleteView.
+        # This used to happen automatically in AutocompleteView->initialize.
+        fuzzyProvider = new FuzzyProvider(editorView, { name: "autocomplete-plus" })
+        autocompleteView.registerProvider fuzzyProvider
 
     it "should allow HTML in labels", ->
       runs ->

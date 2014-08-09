@@ -4,6 +4,7 @@ _ = require "underscore-plus"
 AutocompleteView = require '../lib/autocomplete-view'
 Autocomplete = require '../lib/autocomplete'
 TestProvider = require "./lib/test-provider"
+FuzzyProvider = require '../lib/fuzzy-provider'
 
 describe "Autocomplete", ->
   [activationPromise, completionDelay, editorView, editor, autocomplete] = []
@@ -34,6 +35,12 @@ describe "Autocomplete", ->
 
     runs ->
       editorView = atom.workspaceView.getActiveView()
+
+      # Register a FuzzyProvider for editorView with autocompleteView.
+      # This used to happen automatically in AutocompleteView->initialize.
+      fuzzyProvider = new FuzzyProvider(editorView, { name: "autocomplete-plus" })
+      autocompleteView = autocomplete.autocompleteViews[0]
+      autocompleteView.registerProvider fuzzyProvider
 
   describe "@activate()", ->
     it "activates autocomplete and initializes AutocompleteView instances", ->
