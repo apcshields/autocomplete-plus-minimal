@@ -11,7 +11,7 @@ module.exports =
 
   # Public: Creates AutocompleteView instances for all active and future editors
   activate: ->
-    @getCallingPackage()
+    @setupPackageSpace()
 
     @editorSubscription = atom.workspaceView.eachEditorView (editor) =>
       if editor.attached and not editor.mini
@@ -47,6 +47,22 @@ module.exports =
   # provider - The {Provider} to unregister
   unregisterProvider: (provider) ->
     view.unregisterProvider for view in @autocompleteViews
+
+  # Private: Sets up anything that would have been taken care of if this were a
+  # top-level package.
+  setupPackageSpace: ->
+    @getCallingPackage()
+    @loadStylesheets()
+
+  # Private: Get and load the stylesheets in the `stylesheets` directory.
+  loadStylesheets: ->
+    stylesheetDir = path.join(path.dirname(path.dirname(module.filename)), 'stylesheets')
+    stylesheets = _.filter fs.readdirSync(stylesheetDir), (file) ->
+      extension = path.extname(file)
+
+      extension is 'css' or 'less'
+
+    atom.themes.requireStylesheet(path.join(stylesheetDir, stylesheet)) for stylesheet in stylesheets
 
   # Private: Finds the name of the package loaded by package.js.
   #
