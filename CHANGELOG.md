@@ -1,3 +1,8 @@
+0.1.1 (Aug 10 2014)
+===================
+
+* Properly load stylesheets from the stylesheet directory.
+
 0.1.0 (Aug 9 2014)
 ===================
 [Based on autocomplete-plus 0.21.0.]

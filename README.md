@@ -19,10 +19,34 @@ autocomplete package, this fork may be of interest. Otherwise, you probably want
 
 ## Use as a library for autocompletion packages
 
-Use this fork of autocomplete-plus according to the autocomplete-plus tutorial,
+Mostly, you can use this fork of autocomplete-plus according to the autocomplete-plus tutorial,
 "[Registering and creating suggestion providers](https://github.com/saschagehlich/autocomplete-plus/wiki/Tutorial:-Registering-and-creating-a-suggestion-provider)".
-The only addition you may wish to make is to provide a configuration key in your
-main file like so:
+However, you will also need to install `autocomplete-plus-minimal` in your `node_modules`
+directory and, in the main file of your package, instead of
+```coffeescript
+activate: ->
+  atom.packages.activatePackage("autocomplete-plus")
+    .then (pkg) =>
+      @autocomplete = pkg.mainModule
+      @registerProviders()
+```
+you should use
+```coffeescript
+Autocomplete = require 'autocomplete-plus-minimal'
+...
+activate: ->
+  @autocomplete = Autocomplete
+  @autocomplete.activate()
+
+  @registerProviders()
+```
+That's it!
+
+### Custom file blacklisting
+By using `autocomplete-plus-minimal` instead of registering with the
+`autocomplete-plus` package, you'll automatically use a different autocomplete
+file blacklist for your package. If you would like to provide default values for
+your package's blacklist, provide a configuration key in your main file like so:
 
 ```coffeescript
 module.exports =
@@ -31,6 +55,6 @@ module.exports =
 ```
 
 In this example, the package will not provide autocompletion in any files except
-those whose names end in `.md`, `.markdown`, or `.pandoc`. This will not affect
-any other autocompletion providers, nor will the blacklist settings of other
-providers affect your package.
+those whose names end in `.md`, `.markdown`, or `.pandoc`. Remember, this will
+not affect any other autocompletion providers, nor will the blacklist settings
+of other providers affect your package.
