@@ -1,3 +1,8 @@
+0.1.2 (Oct 3 2014)
+===================
+
+* Prevent suggestion popover from overflowing the editor.
+
 0.1.1 (Aug 10 2014)
 ===================
 

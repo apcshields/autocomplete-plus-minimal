@@ -1,6 +1,6 @@
 {
   "name": "autocomplete-plus-minimal",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "./lib/autocomplete",
   "description": "Library to display possible completions in Atom while typing.",
   "repository": "https://github.com/apcshields/autocomplete-plus-minimal",
