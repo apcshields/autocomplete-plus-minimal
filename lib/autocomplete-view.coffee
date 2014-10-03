@@ -214,6 +214,26 @@ class AutocompleteView extends SimpleSelectListView
     cursorLeft = left
     cursorTop = top
 
+    width = @outerWidth()
+    grandparentWidth = @parent().parent().width()
+
+    # Capture left translate from -webkit-transform, looking for:
+    #   matrix(1, 0, 0, 1, -779, 0)
+    #                      ^^^^
+    leftOffsetFromTransformMatrixRegex = /matrix\((?:[0-9-]+,\s*){4}([0-9-]+)/
+    parentLeftScrollOffset = leftOffsetFromTransformMatrixRegex.exec(@parent().css('-webkit-transform'))?[1]
+
+    parentLeftScrollOffset = parentLeftScrollOffset * 1 if not _.isNaN parentLeftScrollOffset * 1
+
+    availableHorizontalSpace = grandparentWidth - parentLeftScrollOffset
+
+    if width > grandparentWidth
+      # If the list view is wider than the window, pin to the left side.
+      cursorLeft = -parentLeftScrollOffset
+    else
+      # If the list view would run over right side of window, pin to right side.
+      cursorLeft = availableHorizontalSpace - width if cursorLeft + width > availableHorizontalSpace
+
     # The top position if we would put it below the current line
     belowPosition = cursorTop + @editorView.lineHeight
 
